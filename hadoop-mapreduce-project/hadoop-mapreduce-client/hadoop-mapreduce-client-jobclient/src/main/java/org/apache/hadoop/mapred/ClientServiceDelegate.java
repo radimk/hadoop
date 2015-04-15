@@ -101,6 +101,7 @@ public class ClientServiceDelegate {
 
   public ClientServiceDelegate(Configuration conf, ResourceMgrDelegate rm,
       JobID jobId, MRClientProtocol historyServerProxy) {
+    LOG.info("Using patched version of ClientServiceDelegate.");
     this.conf = new Configuration(conf); // Cloning for modifying.
     // For faster redirects from AM to HS.
     this.conf.setInt(
@@ -141,9 +142,9 @@ public class ClientServiceDelegate {
   }
 
   private MRClientProtocol getProxy() throws IOException {
-    if (realProxy != null) {
-      return realProxy;
-    }
+//    if (realProxy != null) {
+//      return realProxy;
+//    }
     
     // Possibly allow nulls through the PB tunnel, otherwise deal with an exception
     // and redirect to the history server.
@@ -160,6 +161,9 @@ public class ClientServiceDelegate {
     while (application == null
         || YarnApplicationState.RUNNING == application
             .getYarnApplicationState()) {
+      if (realProxy != null) {
+        return realProxy;
+      }
       if (application == null) {
         LOG.info("Could not get Job info from RM for job " + jobId
             + ". Redirecting to job history server.");
